@@ -13,41 +13,43 @@ public class MainMenuManager : MonoBehaviour
     {
         label.text = "Hola món";
         labelBtn.text = "Press me";
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    
+
     public void onClickButton()
     {
         Debug.Log("Hola món");
         //SceneManager.LoadScene("GameScene");
         AudioSource source = GetComponent<AudioSource>();
         source.PlayOneShot(audioClip);
-        
-
     }
 
     public void onValueChange(string value)
     {
-        Debug.Log("el contingut és:"+ value);
+        Debug.Log("el contingut és:" + value);
     }
-    
+
     public void onValueChange2()
     {
         Debug.Log("el contingut és:");
     }
-    
+
     public void OnToogleClicked(bool flag)
     {
         if (flag)
         {
-            Debug.Log("click ");    
+            Debug.Log("click ");
         }
-        
     }
+    public void ChangeSceneGame()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+
 }
