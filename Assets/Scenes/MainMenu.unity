@@ -204,18 +204,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1636351610}
         m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
-        m_MethodName: onClickButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1636351610}
-        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
         m_MethodName: ChangeSceneGame
         m_Mode: 1
         m_Arguments:
@@ -790,8 +778,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b51386506c43848008d2b9eaaf75b9b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  label: {fileID: 0}
-  labelBtn: {fileID: 0}
   audioClip: {fileID: 8300000, guid: ce9c6ecd1ad8b4df299469291fb3fe65, type: 3}
 --- !u!4 &1636351611
 Transform:
@@ -1158,8 +1144,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 927733356}
+  - {fileID: 608104962}
   - {fileID: 465821280}
   - {fileID: 1810803185}
   - {fileID: 967912559}
-  - {fileID: 608104962}
   - {fileID: 1636351611}

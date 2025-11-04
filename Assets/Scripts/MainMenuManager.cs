@@ -5,15 +5,10 @@ using TMPro;
 using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI label;
-    [SerializeField] private TextMeshProUGUI labelBtn;
     [SerializeField] private AudioClip audioClip;
     // Start is called before the first frame update
     void Start()
     {
-        label.text = "Hola món";
-        labelBtn.text = "Press me";
-
     }
 
     // Update is called once per frame
@@ -49,7 +44,7 @@ public class MainMenuManager : MonoBehaviour
     }
     public void ChangeSceneGame()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("DificultMenu");
     }
 
 }

@@ -5,6 +5,9 @@ using UnityEngine;
 public class Token : MonoBehaviour
 {
     private GameManager gameManager;
+    private Animator animator;
+    private bool isMatched = false;
+
     public MeshRenderer mr;
     // Start is called before the first frame update
     void Start()
@@ -12,30 +15,40 @@ public class Token : MonoBehaviour
         GameObject o = GameObject.FindGameObjectWithTag("GameManager");
         gameManager = o.GetComponent<GameManager>();
     }
-
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
     // Update is called once per frame
     void Update()
     {
         
     }
-    
     void OnMouseDown()
     {
-        gameManager.TokenPressed(gameObject.name);
+        gameManager.TokenPressed(transform.parent.name);
     }
 
     public void ShowToken()
     {
-        transform.Rotate(Vector3.right, 180);
+        animator.SetBool("Show", true);
+        animator.SetBool("Hide", false);
     }
-    
+
     public void HideToken()
     {
-        transform.Rotate(Vector3.right, -180);
+        animator.SetBool("Hide", true);
+        animator.SetBool("Show", false);
     }
     
     public void MatchToken()
     {
-        Destroy(gameObject);
+        isMatched = true;
+        animator.SetBool("Win", true);
     }
+    public bool IsMatched()
+    {
+        return isMatched;
+    }
+
 }
