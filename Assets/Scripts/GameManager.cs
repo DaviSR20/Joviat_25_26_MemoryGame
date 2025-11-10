@@ -15,6 +15,11 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI intentosText;
     public GameObject[,] tokens;
     public Button ShowAllButton;
+    
+    [Header("Audio")]
+    public AudioClip matchSound;   // Sonido al acertar
+    public AudioClip failSound;    // Sonido al fallar
+    private AudioSource audioSource;
 
     private int rows;
     private int cols;
@@ -32,11 +37,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        audioSource = Camera.main.GetComponent<AudioSource>(); // Busca el AudioSource en la cámara
         isTimerRunning = true;
         elapsedTime = 0f;
         intentos = 0;
         if (intentosText != null)
-            intentosText.text = "Intentos: 0";
+            intentosText.text = "Intents: 0";
 
         // ✅ Obtener dificultad del DificultManager
         string dificultad = DificultManager.Instance != null
@@ -135,6 +141,27 @@ public class GameManager : MonoBehaviour
         numTokensOpened = 0;
         tokens = new GameObject[rows, cols];
 
+        int totalTokens = rows * cols;
+        int numPairs = totalTokens / 2;
+
+        // 🔹 Crear una lista de materiales para el tablero (cada uno aparece 2 veces)
+        List<Material> materialesParaUsar = new List<Material>();
+
+        for (int i = 0; i < numPairs; i++)
+        {
+            Material mat = materials[i % materials.Length]; // por si hay menos materiales disponibles
+            materialesParaUsar.Add(mat);
+            materialesParaUsar.Add(mat); // duplicar (para formar pareja)
+        }
+
+        // 🔹 Mezclar la lista (Fisher–Yates shuffle)
+        for (int i = 0; i < materialesParaUsar.Count; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, materialesParaUsar.Count);
+            (materialesParaUsar[i], materialesParaUsar[randomIndex]) = (materialesParaUsar[randomIndex], materialesParaUsar[i]);
+        }
+
+        // 🔹 Crear los tokens en el tablero
         Vector3 startPos = new Vector3(-((cols - 1) * spacing) / 2, 0, ((rows - 1) * spacing) / 2);
         int indexM = 0;
 
@@ -143,12 +170,12 @@ public class GameManager : MonoBehaviour
             for (int j = 0; j < cols; j++)
             {
                 Vector3 pos = startPos + new Vector3(j * spacing * 1.25f, 0, -i * spacing);
-                GameObject parentObj = Instantiate(prefabToken, pos, Quaternion.identity);
+                GameObject parentObj = Instantiate(prefabToken, pos, Quaternion.Euler(0, -90, 0));
                 parentObj.name = $"Token_{i}_{j}";
 
                 Token token = parentObj.GetComponentInChildren<Token>();
-                token.mr.material = materials[indexM];
-                indexM = (indexM + 1) % materials.Length;
+                token.mr.material = materialesParaUsar[indexM];
+                indexM++;
 
                 tokens[i, j] = parentObj;
             }
@@ -206,12 +233,14 @@ public class GameManager : MonoBehaviour
         {
             t1.MatchToken();
             t2.MatchToken();
+            PlaySound(matchSound); // ✅ sonido de acierto
             CheckGameCompletion();
         }
         else
         {
             t1.HideToken();
             t2.HideToken();
+            PlaySound(failSound); // ❌ sonido de fallo
         }
 
         numTokensOpened = 0;
@@ -247,4 +276,15 @@ public class GameManager : MonoBehaviour
     {
         AlertaBtnGastat.gameObject.SetActive(false);
     }
+
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+            audioSource.PlayOneShot(clip);
+    }
+ 
 }
