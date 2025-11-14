@@ -1,71 +1,81 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement; // 👈 necesario para cargar escenas
+using UnityEngine.SceneManagement;
 
 public class DificultManager : MonoBehaviour
 {
     public static DificultManager Instance;
 
-    [Header("Referencias UI")]
-    public Button easyButton;
-    public Button mediumButton;
-    public Button hardButton;
-
-    private string selectedDifficulty = null; // 👈 guardará la dificultad elegida
+    private string selectedDifficulty = null;
 
     private void Awake()
     {
-        // Evita duplicados y que se destruya al cargar nueva escena
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        // Suscribirse al evento de carga de escena para reasignar botones
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void Start()
+    private void OnDestroy()
     {
-        // Asignar eventos de click
-        if (easyButton != null)
-            easyButton.onClick.AddListener(() => OnButtonClicked("Fácil"));
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
-        if (mediumButton != null)
-            mediumButton.onClick.AddListener(() => OnButtonClicked("Media"));
+    // 🔹 Se ejecuta cada vez que se carga una escena
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "DificultadScene") // nombre de tu escena de dificultad
+        {
+            // Buscar los botones en la escena recién cargada
+            Button easyButton = GameObject.Find("EasyButton")?.GetComponent<Button>();
+            Button mediumButton = GameObject.Find("MediumButton")?.GetComponent<Button>();
+            Button hardButton = GameObject.Find("HardButton")?.GetComponent<Button>();
 
-        if (hardButton != null)
-            hardButton.onClick.AddListener(() => OnButtonClicked("Difícil"));
+            // Asignar eventos de click
+            if (easyButton != null)
+                easyButton.onClick.AddListener(() => OnButtonClicked("Fácil"));
+
+            if (mediumButton != null)
+                mediumButton.onClick.AddListener(() => OnButtonClicked("Media"));
+
+            if (hardButton != null)
+                hardButton.onClick.AddListener(() => OnButtonClicked("Difícil"));
+        }
     }
 
     private void OnButtonClicked(string dificultad)
     {
-        selectedDifficulty = dificultad; // ✅ guardar dificultad elegida
-        Debug.Log($"🔘 Botón de dificultad pulsado: {dificultad}");
-
-        // Puedes dar feedback visual aquí si quieres
-        // (por ejemplo, cambiar el color del botón o mostrar un texto)
+        selectedDifficulty = dificultad;
+        Debug.Log("🔘 Dificultad elegida: " + dificultad);
+    }
+    public void SetDifficulty(string dificultad)
+    {
+        selectedDifficulty = dificultad;
+        Debug.Log("🔘 Dificultad elegida: " + dificultad);
     }
 
-    // 👇 Esta función la puedes llamar desde un botón "Jugar"
+    public string GetSelectedDifficulty()
+    {
+        return selectedDifficulty;
+    }
+
     public void GoToGameScene()
     {
         if (string.IsNullOrEmpty(selectedDifficulty))
         {
-            Debug.LogWarning("⚠️ No se ha elegido una dificultad antes de continuar.");
+            Debug.LogWarning("⚠️ No se ha elegido dificultad.");
             return;
         }
 
-        Debug.Log($"🚀 Cargando GameScene con dificultad: {selectedDifficulty}");
         SceneManager.LoadScene("GameScene");
-    }
-
-    // 👇 Función para que otros scripts (como GameManager) puedan saber la dificultad
-    public string GetSelectedDifficulty()
-    {
-        return selectedDifficulty;
     }
 }

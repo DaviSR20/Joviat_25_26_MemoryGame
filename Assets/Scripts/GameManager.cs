@@ -37,21 +37,30 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        audioSource = Camera.main.GetComponent<AudioSource>(); // Busca el AudioSource en la cámara
+        // 🔊 Configurar Audio
+        audioSource = Camera.main.GetComponent<AudioSource>();
+
+        // ⏱ Inicializar timer
         isTimerRunning = true;
         elapsedTime = 0f;
+
+        // 🔢 Inicializar intentos
         intentos = 0;
         if (intentosText != null)
             intentosText.text = "Intents: 0";
 
-        // ✅ Obtener dificultad del DificultManager
-        string dificultad = DificultManager.Instance != null
-            ? DificultManager.Instance.GetSelectedDifficulty()
-            : "Fácil"; // valor por defecto
+        // ✅ Obtener dificultad del DificultManager de manera segura
+        string dificultad = "Fácil"; // valor por defecto
+        if (DificultManager.Instance != null)
+        {
+            string selected = DificultManager.Instance.GetSelectedDifficulty();
+            if (!string.IsNullOrEmpty(selected))
+                dificultad = selected;
+        }
 
         Debug.Log("🎯 Dificultad recibida: " + dificultad);
 
-        // ✅ Configurar el tablero según la dificultad
+        // 🔳 Configurar tamaño del tablero según la dificultad
         switch (dificultad)
         {
             case "Fácil":
@@ -72,7 +81,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        // ✅ Generar los tokens
+        // 🎲 Generar los tokens
         GenerarTablero();
     }
     void Update()
